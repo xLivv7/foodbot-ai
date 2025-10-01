@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card">
+    <h2>Witaj w FoodBot AI 👋</h2>
+    <p>To jest minimalne demo. Web UI poczy si z API:</p>
+    <pre>{{ api_ok | tojson(indent=2) }}</pre>
+    <p>API base URL: <code>{{ api_url }}</code></p>
+    <p>Przejcie do Etapu 1 doda formularz „Nowy przepis” i kalkulacj makro.</p>
+  </div>
+{% endblock %}

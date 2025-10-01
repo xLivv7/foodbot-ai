@@ -1,0 +1,72 @@
+﻿
+name: foodbot-ai
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-foodbot}
+      POSTGRES_USER: ${POSTGRES_USER:-foodbot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-foodbot}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-foodbot} -d ${POSTGRES_DB:-foodbot}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks: [app-net]
+
+  recipes-api:
+    build:
+      context: ../services/recipes-api
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      DATABASE_URL: postgresql+psycopg://foodbot:foodbot@db:5432/foodbot
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [app-net]
+
+  web-ui:
+    build:
+      context: ../services/web-ui
+    environment:
+      API_BASE_URL: http://recipes-api:8000
+      APP_ENV: ${APP_ENV:-dev}
+    depends_on:
+      recipes-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8001/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [app-net]
+
+  gateway:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      web-ui:
+        condition: service_healthy
+      recipes-api:
+        condition: service_healthy
+    networks: [app-net]
+
+volumes:
+  dbdata:
+
+networks:
+  app-net:
+    driver: bridge

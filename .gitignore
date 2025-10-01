@@ -1,0 +1,19 @@
+﻿# Python / FastAPI
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+.env
+.env.*
+
+# editor
+.vscode/
+.idea/
+
+# Docker / build artefacts
+infra/gateway/*.log
+*.log
+
+# Zrzuty/backupy bazy (opcjonalnie)
+backup_*.sql

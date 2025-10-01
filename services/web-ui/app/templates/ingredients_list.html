@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Skadniki</h2>
+  {% if items|length == 0 %}
+    <p>Brak skadników. <a href="/ingredients/new">Dodaj pierwszy</a>.</p>
+  {% else %}
+    <table style="width:100%; border-collapse:collapse">
+      <thead><tr><th style="text-align:left">ID</th><th>Nazwa</th><th>Marka</th></tr></thead>
+      <tbody>
+        {% for it in items %}
+          <tr>
+            <td>{{ it.id }}</td>
+            <td>{{ it.name }}</td>
+            <td>{{ it.brand or "" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Nowy przepis</h2>
+  <form method="post">
+    <div><label>Tytu <input name="title" required></label></div>
+    <div><label>Porcje <input type="number" name="portions" min="1" value="1" required></label></div>
+    <div><label>Opis <input name="description"></label></div>
+    <h3>Skadniki (podaj ID istniejcych skadników)</h3>
+    <p style="opacity:.8">Najpierw dodaj skadniki na stronie „Nowy skadnik”. Dla unit ≠ g podaj te „grams”.</p>
+    {% for i in [1,2,3] %}
+      <fieldset style="margin-bottom:.5rem">
+        <legend>Pozycja {{i}}</legend>
+        <label>Ingredient ID <input type="number" name="ing{{i}}_id"></label>
+        <label>Qty <input type="number" step="0.01" name="ing{{i}}_qty"></label>
+        <label>Unit <input name="ing{{i}}_unit" value="g"></label>
+        <label>Grams <input type="number" step="0.01" name="ing{{i}}_grams" value="0"></label>
+      </fieldset>
+    {% endfor %}
+    <button type="submit">Zapisz przepis</button>
+  </form>
+</div>
+{% endblock %}

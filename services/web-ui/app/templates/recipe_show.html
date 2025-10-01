@@ -1,0 +1,16 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>{{ recipe.title }}</h2>
+  <p>Porcji: <strong>{{ recipe.portions }}</strong></p>
+  <h3>Makro na 1 porcj</h3>
+  <ul>
+    <li>Kalorie: {{ recipe.per_portion.calories_kcal }} kcal</li>
+    <li>Biako: {{ recipe.per_portion.protein_g }} g</li>
+    <li>Tuszcz: {{ recipe.per_portion.fat_g }} g</li>
+    <li>Wgle: {{ recipe.per_portion.carbs_g }} g</li>
+    <li>Bonnik: {{ recipe.per_portion.fiber_g }} g</li>
+    <li>Sód: {{ recipe.per_portion.sodium_mg }} mg</li>
+  </ul>
+</div>
+{% endblock %}
