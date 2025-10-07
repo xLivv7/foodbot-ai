@@ -1,11 +1,21 @@
 ﻿from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 import os, httpx
 
 app = FastAPI(title="FoodBot Web UI", version="1.1.0")
 templates = Jinja2Templates(directory="app/templates")
 API_BASE_URL = os.getenv("API_BASE_URL", "http://recipes-api:8000")
+
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+@app.get("/config.json", include_in_schema=False)
+def config_json():
+    return FileResponse(STATIC_DIR / "config.json", media_type="application/json")
+
 
 @app.get("/healthz", tags=["health"])
 def healthz():

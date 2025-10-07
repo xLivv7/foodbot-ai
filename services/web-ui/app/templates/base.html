@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>FoodBot AI</title>
+
   <style>
     :root { color-scheme: light dark; }
     body { max-width: 900px; margin: 2rem auto; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif; padding: 0 1rem; }
@@ -11,15 +12,56 @@
     .card { border: 1px solid #8883; border-radius: 12px; padding: 1rem; }
     code, pre { background: #8882; padding: 0.25rem 0.5rem; border-radius: 6px; }
   </style>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/static/manifest.json" />
+
+  <!-- Service Worker (cache/offline) -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/static/service-worker.js");
+      });
+    }
+  </script>
 </head>
 <body>
   <header>
     <h1>🍽️ FoodBot AI</h1>
-    <nav><a href="/">Home</a> · <a href="/ingredients">Składniki</a> · <a href="/ingredients/new">Nowy składnik</a> · <a href="/recipes/new">Nowy przepis</a></nav>
+    <nav>
+      <a href="/">Home</a> ·
+      <a href="/ingredients">Składniki</a> ·
+      <a href="/ingredients/new">Nowy składnik</a> ·
+      <a href="/recipes/new">Nowy przepis</a>
+    </nav>
   </header>
+
   <main>
     {% block content %}{% endblock %}
   </main>
-  <footer style="margin-top:2rem;opacity:.7">Demo Etap 0 • Gateway: <code>/api</code> → Recipes API</footer>
+
+  <footer style="margin-top:2rem;opacity:.7">
+    Demo Etap 0 • Gateway: <code>/api</code> → Recipes API
+  </footer>
+
+  <!-- Jeden skrypt ustawiający adres API z /config.json (fallback na localhost:8080) -->
+  <script>
+    (async () => {
+      // domyślna wartość na lokalny gateway — zostanie nadpisana jeśli config.json zwróci inną
+      window.API_BASE = "http://localhost:8080";
+      try {
+        const r = await fetch("/config.json");
+        if (r.ok) {
+          const cfg = await r.json();
+          if (cfg && cfg.apiBaseUrl) {
+            window.API_BASE = cfg.apiBaseUrl;
+          }
+        }
+        console.log("API_BASE set to:", window.API_BASE);
+      } catch (err) {
+        console.warn("config.json fetch failed, using default:", window.API_BASE, err);
+      }
+    })();
+  </script>
 </body>
 </html>
